@@ -6,6 +6,9 @@ import NewWorkout from "../components/NewWorkout";
 const mainPage = () => {
   const [workouts, setWorkouts] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [selectedWorkout, setSelectedWorkout] = useState(null);
+
+
   const handleOpenForm = () => {
     setShowForm(true);
   };
@@ -21,6 +24,14 @@ const mainPage = () => {
     } catch (error) {
       console.error("Error deleting workout:", error);
     }
+  };
+  const handleAddWorkout = async(workout) => {
+    setSelectedWorkout(null);
+    handleOpenForm();
+  }
+  const handleEdit = (workout) => {
+    setSelectedWorkout(workout);
+    setShowForm(true);
   };
   useEffect(() => {
     const fetchWorkouts = async () => {
@@ -42,7 +53,7 @@ const mainPage = () => {
         </h1>
         <div className="flex justify-center mb-8">
           <button
-            onClick={handleOpenForm}
+            onClick={handleAddWorkout}
             className="bg-[#2ee96b] text-white font-bold py-2 px-4 rounded-full shadow-lg hover:bg-[#1b2b1b] transition duration-300 ease-in-out transform hover:scale-105"
           >
             Add New Workout
@@ -99,7 +110,7 @@ const mainPage = () => {
         </div>
       </div>
 
-      {showForm && <NewWorkout onClose={handleCloseForm} />}
+      {showForm && <NewWorkout onClose={handleCloseForm} workout={selectedWorkout} />}
     </div>
   );
 };
