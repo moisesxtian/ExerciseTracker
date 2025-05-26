@@ -46,60 +46,56 @@ const mainPage = () => {
   }, []);
 
   return (
-    <div>
-      <div className="flex flex-col justify-center mt-8">
-        <h1 className="text-3xl font-bold text-[#2ee96b] mb-8 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-pastel-blue to-pastel-mint font-poppins flex flex-col items-center">
+      <header className="w-full flex flex-col items-center pt-16 pb-8 animate-fade-in">
+        <h1 className="text-5xl font-black text-pastel-navy mb-4 tracking-tight drop-shadow-xl animate-slide-down">
           Workouts
         </h1>
-        <div className="flex justify-center mb-8">
-          <button
-            onClick={handleAddWorkout}
-            className="bg-[#2ee96b] text-white font-bold py-2 px-4 rounded-full shadow-lg hover:bg-[#1b2b1b] transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            Add New Workout
-          </button>
-        </div>
-      </div>
-      <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <button
+          onClick={handleAddWorkout}
+          className="mt-2 bg-pastel-green text-pastel-navy font-bold py-3 px-8 rounded-2xl shadow-xl hover:bg-pastel-navy hover:text-pastel-green transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-pastel-green/40 animate-bounce-short"
+        >
+          + Add New Workout
+        </button>
+      </header>
+      <main className="w-full flex-1 flex justify-center items-start">
+        <div className="max-w-7xl w-full px-6 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 animate-fade-in-up">
           {workouts &&
-            workouts.map((workout) => (
+            workouts.map((workout, idx) => (
               <div
                 key={workout._id}
-                className="relative bg-white/5 backdrop-blur-lg border border-[#2ee96b]/20 rounded-2xl shadow-lg p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                className="relative bg-white/80 border-2 border-pastel-navy/20 rounded-3xl shadow-2xl p-8 flex flex-col items-start transition-all duration-300 hover:scale-105 hover:shadow-3xl group animate-card-fade-in"
+                style={{ animationDelay: `${idx * 80}ms` }}
               >
-                {/* Action Icons */}
-                <div className="absolute top-4 right-4 flex gap-2">
+                <div className="absolute top-5 right-5 flex gap-2 opacity-90 group-hover:opacity-100 transition">
                   <button
-                    onClick={() => handleEdit(workout)} // Define this function
-                    className="p-1 bg-[#2ee96b] text-white rounded-full hover:bg-[#1b2b1b] transition"
+                    onClick={() => handleEdit(workout)}
+                    className="p-2 bg-pastel-green text-pastel-navy rounded-full border border-gray-300 hover:bg-[#2ee96b] hover:text-white hover:filter hover:saturate-150 transition shadow-lg focus:outline-none focus:ring-2 focus:ring-pastel-green/40"
                     title="Edit Workout"
                   >
-                    <Pencil size={16} />
+                    <Pencil size={20} />
                   </button>
                   <button
-                    onClick={() => handleDelete(workout._id)} // Define this function
-                    className="p-1 bg-red-500 text-white rounded-full hover:bg-red-700 transition"
+                    onClick={() => handleDelete(workout._id)}
+                    className="p-2 bg-pastel-red text-white rounded-full border border-gray-300 hover:bg-[#ff4d4f] hover:text-white hover:filter hover:saturate-150 transition shadow-lg focus:outline-none focus:ring-2 focus:ring-pastel-red/40"
                     title="Delete Workout"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={20} />
                   </button>
                 </div>
-
-                <h2 className="text-xl font-bold text-[#2ee96b] mb-2">
+                <h2 className="text-2xl font-extrabold text-pastel-navy mb-2 tracking-tight drop-shadow-sm animate-slide-up">
                   {workout.title}
                 </h2>
-                <p className="text-gray-600 text-md mb-1">
-                  Reps:{" "}
-                  <span className="font-bold text-lg">{workout.reps}</span>
-                </p>
-                <p className="text-gray-600 text-md mb-1">
-                  Load:{" "}
-                  <span className="font-bold text-lg">{workout.load} kg</span>
-                </p>
-                <p className="text-gray-500 text-xs mt-4">
-                  Added on:{" "}
-                  {new Date(workout.createdAt).toLocaleDateString("en-US", {
+                <div className="flex gap-6 mb-2">
+                  <p className="text-pastel-navy text-lg font-semibold">
+                    Reps: <span className="font-black text-pastel-green drop-shadow">{workout.reps}</span>
+                  </p>
+                  <p className="text-pastel-navy text-lg font-semibold">
+                    Load: <span className="font-black text-pastel-green drop-shadow">{workout.load} kg</span>
+                  </p>
+                </div>
+                <p className="text-pastel-navy/70 text-xs mt-4 font-medium">
+                  Added on: {new Date(workout.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
                     day: "numeric",
@@ -108,8 +104,7 @@ const mainPage = () => {
               </div>
             ))}
         </div>
-      </div>
-
+      </main>
       {showForm && <NewWorkout onClose={handleCloseForm} workout={selectedWorkout} />}
     </div>
   );

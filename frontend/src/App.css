@@ -1,1 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap');
 @import "tailwindcss";
+
+:root {
+  --pastel-blue: #b8c6db;
+  --pastel-mint: #d6f5e3;
+  --pastel-green: #7ed6a7;
+  --pastel-navy: #3a506b;
+  --pastel-red: #ffb3b3;
+}
+
+/* Tailwind custom colors (if using tailwind.config.js, add these there for production) */
+.bg-pastel-blue { background-color: var(--pastel-blue) !important; }
+.bg-pastel-mint { background-color: var(--pastel-mint) !important; }
+.bg-pastel-green { background-color: var(--pastel-green) !important; }
+.bg-pastel-navy { background-color: var(--pastel-navy) !important; }
+.bg-pastel-red { background-color: var(--pastel-red) !important; }
+
+.text-pastel-blue { color: var(--pastel-blue) !important; }
+.text-pastel-mint { color: var(--pastel-mint) !important; }
+.text-pastel-green { color: var(--pastel-green) !important; }
+.text-pastel-navy { color: var(--pastel-navy) !important; }
+.text-pastel-red { color: var(--pastel-red) !important; }
+
+.border-pastel-blue { border-color: var(--pastel-blue) !important; }
+.border-pastel-green { border-color: var(--pastel-green) !important; }
+.border-pastel-navy { border-color: var(--pastel-navy) !important; }
+.border-pastel-red { border-color: var(--pastel-red) !important; }
+
+body, .font-poppins {
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  background: none;
+}
+
+@theme {
+  --animation-fade-in: fade-in 0.3s ease-out forwards;
+  --animation-scale-in: scale-in 0.3s ease-out forwards;
+  --animation-shake: shake 0.5s ease-in-out;
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bounce-short {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-10px); }
+  60% { transform: translateY(5px); }
+}
+@keyframes card-fade-in {
+  from { opacity: 0; transform: scale(0.96) translateY(30px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-fade-in { animation: fade-in 0.7s cubic-bezier(.4,0,.2,1) both; }
+.animate-fade-in-up { animation: fade-in-up 0.8s cubic-bezier(.4,0,.2,1) both; }
+.animate-slide-down { animation: slide-down 0.7s cubic-bezier(.4,0,.2,1) both; }
+.animate-slide-up { animation: slide-up 0.7s cubic-bezier(.4,0,.2,1) both; }
+.animate-bounce-short { animation: bounce-short 1s 1; }
+.animate-card-fade-in { animation: card-fade-in 0.7s cubic-bezier(.4,0,.2,1) both; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-10px); }
+  40%, 80% { transform: translateX(10px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+body.dark-mode {
+  background: linear-gradient(135deg, #232d23 0%, #181c1b 100%) !important;
+  color: #e0ffe6;
+}
+body.dark-mode .bg-white\/80,
+body.dark-mode .bg-white\/60 {
+  background-color: #232d23 !important;
+  color: #e0ffe6 !important;
+}
+body.dark-mode .text-pastel-navy {
+  color: #e0ffe6 !important;
+}
+body.dark-mode .text-pastel-green {
+  color: #7ed6a7 !important;
+}
+body.dark-mode .border-pastel-navy\/20,
+body.dark-mode .border-gray-300 {
+  border-color: #444 !important;
+}
+body.dark-mode .shadow-2xl,
+body.dark-mode .shadow-lg {
+  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.7) !important;
+}
+
+/* Subtle thin grey border for cards */
+.border-pastel-navy\/20, .border-gray-300 {
+  border-width: 1px !important;
+  border-color: #d1d5db !important;
+}
+
+/* Edit/Delete icon hover: more saturated */
+button[title="Edit Workout"]:hover {
+  background-color: #2ee96b !important;
+  color: #fff !important;
+  filter: saturate(1.5);
+}
+button[title="Delete Workout"]:hover {
+  background-color: #ff4d4f !important;
+  color: #fff !important;
+  filter: saturate(1.5);
+}

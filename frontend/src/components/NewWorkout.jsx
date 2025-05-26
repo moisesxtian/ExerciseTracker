@@ -1,131 +1,147 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext';
-//create a new workout component overlaying the main page
-const NewWorkout = ({ onClose,workout = null }) => {
-    const {dispatch} = useWorkoutsContext();
-    const [title, setTitle] = useState('');
-    const [reps, setReps] = useState('');
-    const [load, setLoad] = useState('');
-    //please fill in all the fields
-    const [isFormValid, setIsFormValid] = useState(true);
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (!title || !reps || !load) {
-                setIsFormValid(false);
-            }
-            if(workout){
-            console.log(`http://localhost:3000/api/workouts/${workout._id}`);
-            console.log(title, reps, load);
-            const response = await axios.patch(`http://localhost:3000/api/workouts/${workout._id}`, {
-                title,
-                reps,
-                load,
-            });
-            const updatedWorkout = {
-                ...workout,
-                title,
-                reps,
-                load,
-            };
-            dispatch({ type: 'UPDATE_WORKOUT', payload: updatedWorkout});
-            console.log('payload id:', response.data.workout._id);
-            onClose(); // Close the form after submission
-            }
-            else{
-            const response = await axios.post('http://localhost:3000/api/workouts', {
-                title,
-                reps,
-                load,
-            });
-            dispatch({ type: 'CREATE_WORKOUT', payload: response.data });
-            console.log('Workout added:', response.data);
-            onClose(); // Close the form after submission   
-            }
-        } catch (error) {
-            console.error('Error adding workout:', error);
-        }
+import '../App.css'; // Corrected import path
+
+const NewWorkout = ({ onClose, workout = null }) => {
+  const { dispatch } = useWorkoutsContext();
+
+  const [title, setTitle] = useState('');
+  const [reps, setReps] = useState('');
+  const [load, setLoad] = useState('');
+  const [isFormValid, setIsFormValid] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [invalidFields, setInvalidFields] = useState([]);
+
+  // Detect dark mode from body class for sync with Navbar
+  const [isDark, setIsDark] = useState(() => document.body.classList.contains('dark-mode'));
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.body.classList.contains('dark-mode'));
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const invalid = [];
+    if (!title) invalid.push('title');
+    if (!reps) invalid.push('reps');
+    if (!load) invalid.push('load');
+    if (invalid.length > 0) {
+      setIsFormValid(false);
+      setInvalidFields(invalid);
+      setShowError(false); // Reset to re-trigger animation
+      setTimeout(() => setShowError(true), 10); // Short delay to re-trigger
+      return;
     }
-    useEffect(() => {
-        if (workout) {
-            setTitle(workout.title);
-            setReps(workout.reps);
-            setLoad(workout.load);
-        }else{
-            setTitle('');
-            setReps('');
-            setLoad('');
-        }
-    }, [workout]);
+    setIsFormValid(true);
+    setInvalidFields([]);
+    setShowError(false);
+    try {
+      if (workout) {
+        const response = await axios.patch(
+          `http://localhost:3000/api/workouts/${workout._id}`,
+          { title, reps, load }
+        );
+        dispatch({ type: 'UPDATE_WORKOUT', payload: response.data });
+      } else {
+        const response = await axios.post('http://localhost:3000/api/workouts', {
+          title,
+          reps,
+          load,
+        });
+        dispatch({ type: 'CREATE_WORKOUT', payload: response.data });
+      }
+      onClose();
+    } catch (error) {
+      console.error('Error saving workout:', error);
+    }
+  };
 
-    return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+  useEffect(() => {
+    if (workout) {
+      setTitle(workout.title);
+      setReps(workout.reps);
+      setLoad(workout.load);
+    } else {
+      setTitle('');
+      setReps('');
+      setLoad('');
+    }
+    setIsFormValid(true);
+    setInvalidFields([]);
+    setShowError(false);
+  }, [workout]);
 
-        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-[#2ee96b] mb-4">{workout?"Edit Workout":"Add New Workout"}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="mb-4">
-                <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">
-                Title
-                </label>
-                <input
-                type="text"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Workout Title"
-                />
+  return (
+    <div className={`fixed inset-0 flex items-center justify-center z-50 font-poppins backdrop-blur-md ${isDark ? 'bg-black/80' : 'bg-black/30'}`}>
+      <div className={`rounded-2xl shadow-2xl p-8 w-full max-w-md border transition-colors duration-300 ${isDark ? 'bg-[#232d23] border-gray-700' : 'bg-white border-[#e0e0e0]'}`}>
+        <h2 className={`text-2xl font-extrabold mb-6 tracking-tight text-center transition-colors duration-300 ${isDark ? 'text-pastel-green' : 'text-[#2ee96b]'}`}>
+          {workout ? 'Edit Workout' : 'Add New Workout'}
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="title" className={`block text-sm font-semibold mb-1 transition-colors duration-300 ${isDark ? 'text-pastel-green' : 'text-gray-700'}`}>Title</label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className={`w-full border rounded-lg px-3 py-2 transition-all duration-200 focus:outline-none focus:ring-2 bg-[#f8f9fa] placeholder-gray-400 ${isDark ? 'bg-[#232d23] text-pastel-green placeholder-pastel-green/60 focus:ring-pastel-green/60 border-gray-700' : 'text-gray-800 focus:ring-[#2ee96b]/60 border-gray-300'} ${invalidFields.includes('title') ? 'border-red-500 focus:ring-red-400' : ''}`}
+              placeholder="Workout Title"
+            />
+          </div>
+          <div>
+            <label htmlFor="reps" className={`block text-sm font-semibold mb-1 transition-colors duration-300 ${isDark ? 'text-pastel-green' : 'text-gray-700'}`}>Reps</label>
+            <input
+              type="number"
+              id="reps"
+              value={reps}
+              onChange={(e) => setReps(e.target.value)}
+              className={`w-full border rounded-lg px-3 py-2 transition-all duration-200 focus:outline-none focus:ring-2 bg-[#f8f9fa] placeholder-gray-400 ${isDark ? 'bg-[#232d23] text-pastel-green placeholder-pastel-green/60 focus:ring-pastel-green/60 border-gray-700' : 'text-gray-800 focus:ring-[#2ee96b]/60 border-gray-300'} ${invalidFields.includes('reps') ? 'border-red-500 focus:ring-red-400' : ''}`}
+              placeholder="Number of Reps"
+            />
+          </div>
+          <div>
+            <label htmlFor="load" className={`block text-sm font-semibold mb-1 transition-colors duration-300 ${isDark ? 'text-pastel-green' : 'text-gray-700'}`}>Load (kg)</label>
+            <input
+              type="number"
+              id="load"
+              value={load}
+              onChange={(e) => setLoad(e.target.value)}
+              className={`w-full border rounded-lg px-3 py-2 transition-all duration-200 focus:outline-none focus:ring-2 bg-[#f8f9fa] placeholder-gray-400 ${isDark ? 'bg-[#232d23] text-pastel-green placeholder-pastel-green/60 focus:ring-pastel-green/60 border-gray-700' : 'text-gray-800 focus:ring-[#2ee96b]/60 border-gray-300'} ${invalidFields.includes('load') ? 'border-red-500 focus:ring-red-400' : ''}`}
+              placeholder="Load in kg"
+            />
+          </div>
+          {!isFormValid && (
+            <div
+              className={`text-red-500 text-sm font-semibold text-center mt-2 animate-shake ${showError ? 'animate-shake' : ''}`}
+              style={{ minHeight: 24 }}
+            >
+              Please fill in all the fields!
             </div>
-            <div className="mb-4">
-                <label htmlFor="reps" className="block text-gray-700 text-sm font-bold mb-2">
-                Reps
-                </label>
-                <input
-                type="number"
-                id="reps"
-                value={reps}
-                onChange={(e) => setReps(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Number of Reps"
-                />
-            </div>
-            <div className="mb-4">
-                <label htmlFor="load" className="block text-gray-700 text-sm font-bold mb-2">
-                Load (kg)
-                </label>
-                <input
-                type="number"
-                id="load"
-                value={load}
-                onChange={(e) => setLoad(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Load in kg"
-                />
-            </div>
-            <div className="text-red-500 text-sm mb-4 justify-center flex">
-                <p1 className="text-red-500 text-sm justify-center flex">{isFormValid ? '' : 'Please fill in all the fields!'}</p1>
-            </div>
-            <div className="flex items-center justify-between">
-                <button
-                type="button"
-                onClick={onClose}
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
-                >
-                Cancel
-                </button>
-                <button
-                type="submit"
-                className="bg-[#2ee96b] hover:bg-[#1b2b1b] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                {workout?"Edit":"Add"} Workout
-                </button>
-            </div>
-            </form>
+          )}
+          <div className="flex justify-end space-x-2 pt-6">
+            <button
+              type="button"
+              onClick={onClose}
+              className={`px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-150 focus:outline-none focus:ring-2 border ${isDark ? 'bg-[#ff4d4f] hover:bg-pastel-navy text-white border-gray-700' : 'bg-pastel-red hover:bg-red-600 text-white border-gray-300'} focus:ring-red-300`}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-150 focus:outline-none focus:ring-2 border ${isDark ? 'bg-pastel-navy hover:bg-pastel-green text-pastel-green border-gray-700' : 'bg-pastel-green hover:bg-[#2ee96b] text-pastel-navy border-gray-300'} focus:ring-[#2ee96b]/40`}
+            >
+              {workout ? 'Edit' : 'Add'} Workout
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 
-        </div>
-        </div>
-    );
-}
 export default NewWorkout;
