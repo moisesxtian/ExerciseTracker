@@ -2,25 +2,24 @@ import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import axios from "axios";
 import NewWorkout from "../components/NewWorkout";
-
+import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 const mainPage = () => {
-  const [workouts, setWorkouts] = useState(null);
+  const {workouts, dispatch} = useWorkoutsContext();
   const [showForm, setShowForm] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
 
   const handleOpenForm = () => {
     setShowForm(true);
-  };
+  }; 
   const handleCloseForm = () => {
     setShowForm(false);
   };
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:3000/api/workouts/${id}`);
-      setWorkouts((prevWorkouts) =>
-        prevWorkouts.filter((workout) => workout._id !== id)
-      );
+      dispatch({type:"DELETE_WORKOUT", payload: id});
+
     } catch (error) {
       console.error("Error deleting workout:", error);
     }
@@ -37,13 +36,14 @@ const mainPage = () => {
     const fetchWorkouts = async () => {
       try {
         const response = await axios.get("http://localhost:3000/api/workouts");
-        setWorkouts(response.data);
+        dispatch({ type: "SET_WORKOUTS", payload: response.data });
+        console.log("Fetched workouts:", response.data);
       } catch (error) {
         console.error(error);
       }
     };
     fetchWorkouts();
-  }, [workouts]);
+  }, []);
 
   return (
     <div>

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useWorkoutsContext } from '../hooks/useWorkoutsContext';
 //create a new workout component overlaying the main page
 const NewWorkout = ({ onClose,workout = null }) => {
+    const {dispatch} = useWorkoutsContext();
     const [title, setTitle] = useState('');
     const [reps, setReps] = useState('');
     const [load, setLoad] = useState('');
@@ -16,7 +18,14 @@ const NewWorkout = ({ onClose,workout = null }) => {
                 reps,
                 load,
             });
-            console.log('Workout updated:', response.data);
+            const updatedWorkout = {
+                ...workout,
+                title,
+                reps,
+                load,
+            };
+            dispatch({ type: 'UPDATE_WORKOUT', payload: updatedWorkout});
+            console.log('payload id:', response.data.workout._id);
             onClose(); // Close the form after submission
             }
             else{
@@ -25,6 +34,7 @@ const NewWorkout = ({ onClose,workout = null }) => {
                 reps,
                 load,
             });
+            dispatch({ type: 'CREATE_WORKOUT', payload: response.data });
             console.log('Workout added:', response.data);
             onClose(); // Close the form after submission   
             }
