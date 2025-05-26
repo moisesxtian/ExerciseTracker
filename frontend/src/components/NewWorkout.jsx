@@ -7,9 +7,14 @@ const NewWorkout = ({ onClose,workout = null }) => {
     const [title, setTitle] = useState('');
     const [reps, setReps] = useState('');
     const [load, setLoad] = useState('');
+    //please fill in all the fields
+    const [isFormValid, setIsFormValid] = useState(true);
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            if (!title || !reps || !load) {
+                setIsFormValid(false);
+            }
             if(workout){
             console.log(`http://localhost:3000/api/workouts/${workout._id}`);
             console.log(title, reps, load);
@@ -99,7 +104,9 @@ const NewWorkout = ({ onClose,workout = null }) => {
                 placeholder="Load in kg"
                 />
             </div>
-
+            <div className="text-red-500 text-sm mb-4 justify-center flex">
+                <p1 className="text-red-500 text-sm justify-center flex">{isFormValid ? '' : 'Please fill in all the fields!'}</p1>
+            </div>
             <div className="flex items-center justify-between">
                 <button
                 type="button"
