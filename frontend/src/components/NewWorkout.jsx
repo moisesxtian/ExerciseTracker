@@ -26,9 +26,9 @@ const NewWorkout = ({ onClose, workout = null }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const invalid = [];
-    if (!title) invalid.push('title');
-    if (!reps) invalid.push('reps');
-    if (!load) invalid.push('load');
+    if (title.trim() === '') invalid.push('title');
+    if (reps === '') invalid.push('reps');
+    if (load === '') invalid.push('load');
     if (invalid.length > 0) {
       setIsFormValid(false);
       setInvalidFields(invalid);
@@ -43,12 +43,12 @@ const NewWorkout = ({ onClose, workout = null }) => {
       if (workout) {
         const response = await axios.patch(
           `http://localhost:3000/api/workouts/${workout._id}`,
-          { title, reps, load }
+          { title: title.trim(), reps, load }
         );
-        dispatch({ type: 'UPDATE_WORKOUT', payload: response.data });
+        dispatch({ type: 'UPDATE_WORKOUT', payload: response.data.workout }); // Use the actual workout object
       } else {
         const response = await axios.post('http://localhost:3000/api/workouts', {
-          title,
+          title: title.trim(),
           reps,
           load,
         });

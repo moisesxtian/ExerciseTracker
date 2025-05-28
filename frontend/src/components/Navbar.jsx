@@ -1,3 +1,5 @@
+//link
+import { Link } from "react-router-dom";
 import React, { useState } from "react";
 
 export default function Navbar() {
@@ -29,6 +31,7 @@ export default function Navbar() {
                 </span>
                 <span className="ml-1">ExerciseTracker</span>
             </a>
+            <div className="flex items-center gap-5">
             <button
                 onClick={handleToggleDarkMode}
                 className="ml-4 p-2 rounded-full border border-gray-300 bg-transparent hover:bg-pastel-green/30 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pastel-green/40 flex items-center justify-center"
@@ -56,6 +59,10 @@ export default function Navbar() {
                     </svg>
                 )}
             </button>
+                <Link to="/login" className="text-pastel-navy font-semibold hover:text-pastel-green transition-colors duration-200">
+                    Login
+                </Link>
+            </div>
         </nav>
     );
 }
