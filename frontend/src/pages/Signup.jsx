@@ -4,15 +4,16 @@ const Signup = () => {
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [username, setUsername] = useState("");
+    const [signupSuccess, setSignupSuccess] = useState(false); // New state
     const {signup, isLoading, error} = useSignup();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         await signup(email, password, username);
-        if (error) {
-            console.error("Signup error:", error);
+        if (!error) {
+            setSignupSuccess(true);
         } else {
-            console.log("Signup successful");
+            setSignupSuccess(false);
         }
     }
         
@@ -58,6 +59,11 @@ const Signup = () => {
                         />
                     </div>
                     <button disabled={isLoading} type="submit" className={`w-full bg-pastel-green dark:bg-pastel-navy text-pastel-navy dark:text-pastel-green font-bold py-2 rounded-xl shadow-md hover:bg-pastel-navy hover:text-pastel-green dark:hover:bg-pastel-green dark:hover:text-pastel-navy transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-pastel-green/40 mt-2 animate-bounce-short`}>Sign Up</button>
+                    {signupSuccess && !error && (
+                        <div className="text-green-600 text-sm font-semibold text-center mt-2 animate-fade-in">
+                            Signup Successful!
+                        </div>
+                    )}
                     {error && <div className="text-red-500 text-sm font-semibold text-center mt-2 animate-shake">{error}</div>}
                     {isLoading && <div className="text-pastel-navy text-sm font-semibold text-center mt-2 animate-fade-in">Signing up...</div>}
                 </form>
