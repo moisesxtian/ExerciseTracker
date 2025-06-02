@@ -28,6 +28,10 @@ const userSchema = new Schema({
 
 userSchema.statics.signup = async function(email, password, username) {
     const exist = await this.findOne({ email });
+    const existUsername = await this.findOne({ username });
+    if (existUsername) {
+        throw Error('Username already taken!');
+    }
     if (exist) {
         throw Error('Email already exists');
     }
