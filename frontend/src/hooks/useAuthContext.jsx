@@ -10,5 +10,4 @@ export const useAuthContext = () => {
     }
     
     return context;
-    console.log("useAuthContext context:", context);
 }
