@@ -1,11 +1,15 @@
 //link
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
-
+import { useLogout } from "../hooks/useLogout";
 export default function Navbar() {
+    const { logout } = useLogout();
     const [darkMode, setDarkMode] = useState(false);
 
     // Toggle dark mode by toggling a class on the body
+    const handleClick = () => {
+        logout();
+    }
     const handleToggleDarkMode = () => {
         setDarkMode((prev) => {
             const newMode = !prev;
@@ -59,7 +63,12 @@ export default function Navbar() {
                     </svg>
                 )}
             </button>
-                <Link to="/login" className="text-pastel-navy font-semibold hover:text-pastel-green transition-colors duration-200">
+                <div>
+                    <button onClick={handleClick} className="text-green-750 hover:text-green-800 font-semibold transition-colors">
+                        Log out
+                    </button>
+                </div>
+                <Link to="/login" className="text-pastel-navy font-semibold hover:text-green-950 transition-colors duration-200">
                     Login
                 </Link>
             </div>
