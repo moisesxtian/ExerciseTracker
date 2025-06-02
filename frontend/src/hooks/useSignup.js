@@ -1,7 +1,6 @@
-import {use, useState} from 'react';
+import { useState } from 'react';
 import { useAuthContext } from './useAuthContext';
 import axios from 'axios';
-
 
 const apiClient = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL, 
@@ -10,33 +9,28 @@ const apiClient = axios.create({
 export const useSignup = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const { dispatch } = useAuthContext();
 
-
-    const signup = async (email, password) => {
+    // Accept username as a parameter
+    const signup = async (email, password, username) => {
         setIsLoading(true);
         setError(null);
-        
-        const response = await apiClient.post('/users/signup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+        try {
+            // Send only the user data, not method/headers/body (axios handles this)
+            const response = await apiClient.post('/users/signup', {
                 username,
                 email,
                 password
-            })
-        });
-        const data = response.data;
-        if (!response.ok) {
+            });
+            const data = response.data;
+            localStorage.setItem('user', JSON.stringify(data));
+            // update AuthContext
+            dispatch({ type: 'LOGIN', payload: data });
             setIsLoading(false);
-            setError(data.error);
-            return;
+        } catch (err) {
+            setIsLoading(false);
+            setError(err.response?.data?.error || 'Signup failed');
         }
-        localStorage.setItem('user', JSON.stringify(data));
-        //update AuthContext
-        dispatchEvent({type: 'LOGIN', payload: data});
-        setIsLoading(false);
     }
-    return {signup, isLoading, error};
+    return { signup, isLoading, error };
 }
