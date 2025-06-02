@@ -1,4 +1,8 @@
 const User = require('../models/userModels');
+const jwt= require('jsonwebtoken');
+const createToken = (_id) =>{
+return jwt.sign({_id}, process.env.SECRET, {expiresIn: '3d'});
+}
 const mongoose = require('mongoose');
 //encryption
 const bcrypt = require('bcrypt');
@@ -27,15 +31,12 @@ const userSignup = async (req, res) => {
         return res.status(400).json({ error: 'Please fill all fields' });
     }
     try {
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: 'Email already exists' });
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ email, password: hashedPassword, username });
-        res.status(201).json({ message: 'User created successfully', user });
+        const user = await User.signup(email, password, username);
+        //create a token
+        const token = createToken(user._id);
+        res.status(200).json({email, token});
     } catch (error) {
-        res.status(500).json({ error:error.message});
+        res.status(400).json({ error:error.message});
     }
 };
 

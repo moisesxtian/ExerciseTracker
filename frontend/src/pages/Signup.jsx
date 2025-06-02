@@ -1,12 +1,19 @@
 import {useState} from 'react';
+import {useSignup} from '../hooks/useSignup';
 const Signup = () => {
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [username, setUsername] = useState("");
+    const {signup, isLoading, error} = useSignup();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Signup form submitted with email:", email, "and password:", password);
+        await signup(email, password, username);
+        if (error) {
+            console.error("Signup error:", error);
+        } else {
+            console.log("Signup successful");
+        }
     }
         
     return (
@@ -50,7 +57,9 @@ const Signup = () => {
                             className={`w-full border rounded-lg px-3 py-2 transition-all duration-200 focus:outline-none focus:ring-2 bg-[#f8f9fa] placeholder-gray-400 ${document.body.classList.contains('dark-mode') ? 'bg-[#232d23] text-pastel-green placeholder-pastel-green/60 focus:ring-pastel-green/40 border-gray-700' : 'text-gray-800 focus:ring-pastel-green/40 border-gray-300'}`}
                         />
                     </div>
-                    <button type="submit" className={`w-full bg-pastel-green dark:bg-pastel-navy text-pastel-navy dark:text-pastel-green font-bold py-2 rounded-xl shadow-md hover:bg-pastel-navy hover:text-pastel-green dark:hover:bg-pastel-green dark:hover:text-pastel-navy transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-pastel-green/40 mt-2 animate-bounce-short`}>Sign Up</button>
+                    <button disabled={isLoading} type="submit" className={`w-full bg-pastel-green dark:bg-pastel-navy text-pastel-navy dark:text-pastel-green font-bold py-2 rounded-xl shadow-md hover:bg-pastel-navy hover:text-pastel-green dark:hover:bg-pastel-green dark:hover:text-pastel-navy transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-pastel-green/40 mt-2 animate-bounce-short`}>Sign Up</button>
+                    {error && <div className="text-red-500 text-sm font-semibold text-center mt-2 animate-shake">{error}</div>}
+                    {isLoading && <div className="text-pastel-navy text-sm font-semibold text-center mt-2 animate-fade-in">Signing up...</div>}
                 </form>
                 <div className="w-full text-center mt-6 animate-fade-in-up">
                     <span className={`${document.body.classList.contains('dark-mode') ? 'text-pastel-green/80' : 'text-pastel-navy/80'} text-sm`}>Already have an account? </span>

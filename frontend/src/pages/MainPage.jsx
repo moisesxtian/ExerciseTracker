@@ -1,41 +1,47 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
-import axios from "axios";
 import NewWorkout from "../components/NewWorkout";
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
-const mainPage = () => {
-  const {workouts, dispatch} = useWorkoutsContext();
+import axios from "axios";
+
+// Use the environment variable from .env (which includes "/api")
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+});
+
+const MainPage = () => {
+  const { workouts, dispatch } = useWorkoutsContext();
   const [showForm, setShowForm] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
+  const handleOpenForm = () => setShowForm(true);
+  const handleCloseForm = () => setShowForm(false);
 
-  const handleOpenForm = () => {
-    setShowForm(true);
-  }; 
-  const handleCloseForm = () => {
-    setShowForm(false);
-  };
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/workouts/${id}`);
-      dispatch({type:"DELETE_WORKOUT", payload: id});
-
+      // Use apiClient here instead of axios directly
+      await apiClient.delete(`/workouts/${id}`);
+      dispatch({ type: "DELETE_WORKOUT", payload: id });
     } catch (error) {
       console.error("Error deleting workout:", error);
     }
   };
-  const handleAddWorkout = async(workout) => {
+
+  const handleAddWorkout = () => {
     setSelectedWorkout(null);
     handleOpenForm();
-  }
+  };
+
   const handleEdit = (workout) => {
     setSelectedWorkout(workout);
     setShowForm(true);
   };
+
   useEffect(() => {
     const fetchWorkouts = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/workouts");
+        // Use apiClient here too
+        const response = await apiClient.get("/workouts");
         dispatch({ type: "SET_WORKOUTS", payload: response.data });
         console.log("Fetched workouts:", response.data);
       } catch (error) {
@@ -43,7 +49,7 @@ const mainPage = () => {
       }
     };
     fetchWorkouts();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pastel-blue to-pastel-mint font-poppins flex flex-col items-center">
@@ -95,7 +101,8 @@ const mainPage = () => {
                   </p>
                 </div>
                 <p className="text-pastel-navy/70 text-xs mt-4 font-medium">
-                  Added on: {new Date(workout.createdAt).toLocaleDateString("en-US", {
+                  Added on:{" "}
+                  {new Date(workout.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
                     day: "numeric",
@@ -110,4 +117,4 @@ const mainPage = () => {
   );
 };
 
-export default mainPage;
+export default MainPage;
