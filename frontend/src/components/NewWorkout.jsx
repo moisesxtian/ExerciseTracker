@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext';
 import '../App.css'; // Corrected import path
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const NewWorkout = ({ onClose, workout = null }) => {
   const { dispatch } = useWorkoutsContext();
-
+  const { user } = useAuthContext();
   const [title, setTitle] = useState('');
   const [reps, setReps] = useState('');
   const [load, setLoad] = useState('');
@@ -16,6 +17,7 @@ const NewWorkout = ({ onClose, workout = null }) => {
   // Detect dark mode from body class for sync with Navbar
   const [isDark, setIsDark] = useState(() => document.body.classList.contains('dark-mode'));
   useEffect(() => {
+    console.log(user);
     const observer = new MutationObserver(() => {
       setIsDark(document.body.classList.contains('dark-mode'));
     });
@@ -40,10 +42,18 @@ const NewWorkout = ({ onClose, workout = null }) => {
     setInvalidFields([]);
     setShowError(false);
     try {
+
       if (workout) {
         const response = await axios.patch(
-          `http://localhost:3000/api/workouts/${workout._id}`,
-          { title: title.trim(), reps, load }
+        `http://localhost:3000/api/workouts/${workout._id}`,{ 
+          title: title.trim(),
+          reps,
+          load
+        },{
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
         );
         dispatch({ type: 'UPDATE_WORKOUT', payload: response.data.workout }); // Use the actual workout object
       } else {

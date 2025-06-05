@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import NewWorkout from "../components/NewWorkout";
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
+import {useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
 
 // Use the environment variable from .env (which includes "/api")
@@ -10,6 +11,7 @@ const apiClient = axios.create({
 });
 
 const MainPage = () => {
+  const { user } = useAuthContext();
   const { workouts, dispatch } = useWorkoutsContext();
   const [showForm, setShowForm] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
@@ -20,7 +22,11 @@ const MainPage = () => {
   const handleDelete = async (id) => {
     try {
       // Use apiClient here instead of axios directly
-      await apiClient.delete(`/workouts/${id}`);
+      await apiClient.delete(`/workouts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        }
+      });
       dispatch({ type: "DELETE_WORKOUT", payload: id });
     } catch (error) {
       console.error("Error deleting workout:", error);
@@ -41,15 +47,21 @@ const MainPage = () => {
     const fetchWorkouts = async () => {
       try {
         // Use apiClient here too
-        const response = await apiClient.get("/workouts");
+        const response = await apiClient.get("/workouts", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          }
+        });
         dispatch({ type: "SET_WORKOUTS", payload: response.data });
         console.log("Fetched workouts:", response.data);
       } catch (error) {
         console.error(error);
       }
     };
+    if(user) {
     fetchWorkouts();
-  }, [dispatch]);
+    }
+  },[user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pastel-blue to-pastel-mint font-poppins flex flex-col items-center">

@@ -11,16 +11,21 @@ const userLogin = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(400).json({ error: 'Please fill all fields' });
-    }
+    }   
     try {
         const user = await User.findOne({ email });
+        if (!user){
+            return res.status(400).json({error: 'User does not exist' });
+        }
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!user || passwordMatch === false) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        res.status(200).json({ message: 'Login successful', user });
+        const token = createToken(user._id);
+
+        res.status(200).json({email,token, username: user.username});
     } catch (error) {
-        res.status(500).json({ error:error.message });
+        res.status(500).json({ error:error.message }); 
     }
 };
 
@@ -34,7 +39,7 @@ const userSignup = async (req, res) => {
         const user = await User.signup(email, password, username);
         //create a token
         const token = createToken(user._id);
-        res.status(200).json({email, token});
+        res.status(200).json({email, token , username: user.username});
     } catch (error) {
         res.status(400).json({ error:error.message});
     }
