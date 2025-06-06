@@ -9,7 +9,6 @@ export const workoutsReducer= (state, action) => {
                 workouts: action.payload 
             }
         case 'CREATE_WORKOUT':
-            console.log("test",state);
             return {
                 workouts: [action.payload, ...state.workouts]
             }

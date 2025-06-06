@@ -17,7 +17,6 @@ const NewWorkout = ({ onClose, workout = null }) => {
   // Detect dark mode from body class for sync with Navbar
   const [isDark, setIsDark] = useState(() => document.body.classList.contains('dark-mode'));
   useEffect(() => {
-    console.log(user);
     const observer = new MutationObserver(() => {
       setIsDark(document.body.classList.contains('dark-mode'));
     });
