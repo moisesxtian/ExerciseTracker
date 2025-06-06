@@ -25,6 +25,8 @@ export const useSignup = () => {
             const data = response.data;
             // update AuthContext
             dispatch({ type: 'SIGNUP', payload: data });
+            localStorage.setItem('user', JSON.stringify(data));
+            dispatch({ type: 'LOGIN', payload: data }); // Automatically log in after signup
             setIsLoading(false);
         } catch (err) {
             setIsLoading(false);

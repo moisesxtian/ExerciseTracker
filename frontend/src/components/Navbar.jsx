@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../hooks/useAuthContext";       
+import Logo from '../assets/logo.svg?react';
+
 export default function Navbar() {
     const { logout } = useLogout();
     const [darkMode, setDarkMode] = useState(false);
@@ -26,16 +28,14 @@ export default function Navbar() {
 
     return (
         <nav className={`w-full flex items-center justify-between px-8 py-4 shadow-md transition-colors duration-300 ${darkMode ? 'bg-gradient-to-r from-[#181c1b] to-[#232d23]' : 'bg-gradient-to-r from-[#f8fafc] to-[#e8f5e9]'}`}>
-            <a href="/" className="flex items-center font-black text-2xl tracking-wide text-pastel-navy no-underline gap-2">
-                <span className="w-9 h-9 inline-block">
-                    {/* Dumbbell SVG icon */}
-                    <svg viewBox="0 0 32 32" fill="none">
-                        <rect x="2" y="13" width="4" height="15" rx="1" fill="#7ed6a7" />
-                        <rect x="26" y="13" width="4" height="15" rx="1" fill="#7ed6a7" />
-                        <rect x="8" y="18" width="16" height="3" rx="1" fill="#7ed6a7" />
-                    </svg>
+            <a href="/" className="flex items-centertext-2xl tracking-wide text-pastel-navy no-underline gap-2">
+                <span className={`w-9 h-9 inline-block ${darkMode ? 'text-[#2fdd86]' : 'text-[#2fdd86]'}`}>
+                    <Logo className="w-11 h-11" />
                 </span>
-                <span className="ml-1">ExerciseTracker</span>
+                <div className="flex items-center text-2xl">
+                <span className="ml-1 font-black">Reptr</span>
+                <span className="ml-1 font-extralight">- Workout Tracker</span>
+                </div>
             </a>
             <div className="flex items-center gap-5">
             <button

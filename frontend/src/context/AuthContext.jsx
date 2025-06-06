@@ -16,7 +16,7 @@ export const authReducer = (state, action) => {
             }
         case 'SiGNUP':
             return {
-                user: null 
+                user: action.payload
             }
         default:
             return state;
