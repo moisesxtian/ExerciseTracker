@@ -61,6 +61,10 @@ const NewWorkout = ({ onClose, workout = null }) => {
           title: title.trim(),
           reps,
           load,
+        },{
+          headers:{
+            Authorization: `Bearer ${user.token}`,
+          }
         });
         dispatch({ type: 'CREATE_WORKOUT', payload: response.data });
       }
