@@ -12,12 +12,24 @@ const mongoose = require('mongoose');
 const dbURI = process.env.MONGODB_URI;
 
 // Middleware to handle CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://exercise-tracker-livid.vercel.app",
+  "https://api.hyxcreation.tech"
+];
 
-app.use(cors(
-    {
-        origin: 'http://localhost:5173'
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
     }
-));
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 //default route
