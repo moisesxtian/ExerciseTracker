@@ -13,9 +13,9 @@ const dbURI = process.env.MONGODB_URI;
 
 // Middleware to handle CORS
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://exercise-tracker-livid.vercel.app",
-  "https://api.hyxcreation.tech"
+    "https://exercise-tracker-livid.vercel.app",
+    "https://api.hyxcreation.tech",
+    "http://localhost:5173"
 ];
 
 app.use(cors({
