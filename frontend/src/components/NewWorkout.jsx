@@ -4,6 +4,10 @@ import { useWorkoutsContext } from '../hooks/useWorkoutsContext';
 import '../App.css'; // Corrected import path
 import { useAuthContext } from '../hooks/useAuthContext';
 
+//viteAPI from env
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL, // Ensure this is set correctly
+});
 const NewWorkout = ({ onClose, workout = null }) => {
   const { dispatch } = useWorkoutsContext();
   const { user } = useAuthContext();
@@ -43,8 +47,7 @@ const NewWorkout = ({ onClose, workout = null }) => {
     try {
 
       if (workout) {
-        const response = await axios.patch(
-        `http://localhost:3000/api/workouts/${workout._id}`,{ 
+        const response = await apiClient.patch(`workouts/${workout._id}`,{ 
           title: title.trim(),
           reps,
           load
@@ -56,7 +59,7 @@ const NewWorkout = ({ onClose, workout = null }) => {
         );
         dispatch({ type: 'UPDATE_WORKOUT', payload: response.data.workout }); // Use the actual workout object
       } else {
-        const response = await axios.post('http://localhost:3000/api/workouts', {
+        const response = await apiClient.post(`/workouts`, {
           title: title.trim(),
           reps,
           load,
