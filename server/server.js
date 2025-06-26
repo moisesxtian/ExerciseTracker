@@ -20,7 +20,10 @@ app.use(cors(
 ));
 app.use(express.json());
 
-
+//default route
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
 // User Login/Signup routes
 app.use('/api/users', userRoutes); // Use user routes
 //Workout routes
